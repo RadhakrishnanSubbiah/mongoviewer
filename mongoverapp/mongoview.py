@@ -4,7 +4,7 @@ from django.template import RequestContext
 from pymongo import MongoClient
 from mongoviewer.settings import CONFIG_LOCATION
 from django.http import HttpResponse
-import json, ast, re
+import json, ast, re, traceback
 
 
 @csrf_exempt
@@ -108,6 +108,7 @@ def manage_profile(request):
 				message = "Record deleted successfully."
 		except Exception, e:
 			print 'Error ', sys.exc_info()[0]
+			traceback.print_exc(file=sys.stdout)
 			status = "error"
 		response_data['status'] = status
 		response_data['message'] = message
