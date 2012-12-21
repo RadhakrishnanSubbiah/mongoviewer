@@ -4,7 +4,7 @@ from django.template import RequestContext
 from pymongo import MongoClient
 from mongoviewer.settings import CONFIG_LOCATION
 from django.http import HttpResponse
-import json, ast, re, traceback
+import json, ast, re
 
 
 @csrf_exempt
@@ -107,9 +107,9 @@ def manage_profile(request):
 				WriteToFile(mongoRepoList)
 				message = "Record deleted successfully."
 		except Exception, e:
-			print 'Error ', sys.exc_info()[0]
-			traceback.print_exc(file=sys.stdout)
+			print 'Error '
 			status = "error"
+			pass
 		response_data['status'] = status
 		response_data['message'] = message
 		response_data['mongoRepoList'] = mongoRepoList
@@ -143,5 +143,4 @@ def WriteToFile(mongoRepoList):
 		f.write(temp)	
 		f.close()
 	except:
-		print sys.exc_info()[0]
 		raise Exception("Problem in saving the data.")
