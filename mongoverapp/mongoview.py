@@ -109,7 +109,6 @@ def manage_profile(request):
 		except Exception, e:
 			print 'Error ', sys.exc_info()[0]
 			status = "error"
-			pass
 		response_data['status'] = status
 		response_data['message'] = message
 		response_data['mongoRepoList'] = mongoRepoList
