@@ -107,7 +107,7 @@ def manage_profile(request):
 				WriteToFile(mongoRepoList)
 				message = "Record deleted successfully."
 		except Exception, e:
-			print 'Error '
+			print 'Error ', sys.exc_info()[0]
 			status = "error"
 			pass
 		response_data['status'] = status
@@ -133,6 +133,7 @@ def GetMongoRepoList():
 
 def WriteToFile(mongoRepoList):
 	try:
+		print CONFIG_LOCATION
 		f = open(CONFIG_LOCATION, 'w')
 		f.write("")
 		temp = ''
