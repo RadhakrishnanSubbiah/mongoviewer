@@ -1,0 +1,49 @@
+{% for k, v in dbs.items %}
+<div class="css-treeview">
+	<ul>
+		<li><input type="checkbox" id="item-0" checked="checked"/>
+			<label for="item-0">{{k}}</label>
+			<ul>
+				{% for key, value in v.items %}
+				<li><input type="checkbox" id="item-0-0" /><label for="item-0-0">{{key}}</label>
+					<ul>
+						{% for col in value %}
+							<li><a class="collection" db="{{key}}" col="{{col}}" href="#" hostport="{{k}}">{{col}}</a></li>	
+						{% endfor %}
+					</ul>
+				</li>
+				{% endfor %}
+			</ul>
+		</li>
+	</ul>
+</div>
+{% endfor %}
+<script>
+$('.collection').click(function(){
+	$("#searchpanel").show();
+	$("#search").attr("db",$(this).attr("db"));
+	$("#search").attr("col",$(this).attr("col"));
+	var temp = splitHostPort($(this).attr("hostport"));
+	var host = temp[0];
+	var port = temp[1];
+	$("#search").attr("host",host);
+	$("#search").attr("port",port);
+	var details = '<h4>You are viewing the collection ' + $(this).attr("col") + ' in database ' + $(this).attr("db") + '</h4>';
+	$("#details").html(details);
+	$("#details").show();
+	$.ajax({
+		type: "GET",
+		url: "/viewcollection",
+		data: { db: $(this).attr("db"), col: $(this).attr("col"), host: host, port : port }
+		}).done(function( msg ) {
+			$("#datadiv").html(msg);
+	});
+});
+function splitHostPort(hostport){
+	var start = hostport.indexOf("[");
+	var end = hostport.indexOf("]");
+	hostport = hostport.slice(start+1,end);
+	var temp = hostport.split(":");
+	return temp;
+}
+</script>

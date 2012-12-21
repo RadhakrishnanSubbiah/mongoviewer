@@ -1,102 +1,246 @@
 <!DOCTYPE html>
 <html>
   
-  <head>
-	<meta http-equiv=Content-Type content="text/html; charset=utf-8">
-    <link href="{{STATIC_URL}}css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="{{STATIC_URL}}css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link href="{{STATIC_URL}}css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
-	<link href="{{STATIC_URL}}css/csstree.css" rel="stylesheet" type="text/css">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
-  </head> 
-  <body>
-	<div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></img></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#"><img src="{{STATIC_URL}}img/mongo.jpg" class="img-rounded"></a>
-          <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-              <h2>MongoVer - a tool to see through MongoDB</h2>
-            </p>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
-	<hr>
-	<hr>
-	<hr>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<link href="{{STATIC_URL}}css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="{{STATIC_URL}}css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link href="{{STATIC_URL}}css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+<link href="{{STATIC_URL}}css/csstree.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+<script src="{{STATIC_URL}}js/bootstrap-modal.js" type="text/javascript"></script>
+<script src="{{STATIC_URL}}js/bootstrap-alert.js" type="text/javascript"></script>
+</head> 
+<body>
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Connect to Mongo</h3>
+  </div>
+  <div id="connectmongo" class="modal-body">
+	
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button id="btnConnect" class="btn btn-primary" data-dismiss="modal">Connect</button>
+  </div>
+</div>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
 	<div class="container-fluid">
+	  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+		<span class="icon-bar"></img></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	  </a>
+	  <a class="brand" href="#"><img src="{{STATIC_URL}}img/mongo.jpg" class="img-rounded"></a>
+	  <div class="nav-collapse collapse">
+		<p class="navbar-text pull-right">
+		  <h2>MongoVer - a tool to see through MongoDB</h2>
+		</p>
+	  </div><!--/.nav-collapse -->
+	</div>
+  </div>
+</div>
+<hr>
+<hr>
+<hr>
+<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span2">
-				<div class="css-treeview">
-					<ul>
-						<li><input type="checkbox" id="item-0" checked="checked"/>
-							<label for="item-0">MongoLocal</label>
-							<ul>
-								{% for key, value in dbs.items %}
-								<li><input type="checkbox" id="item-0-0" /><label for="item-0-0">{{key}}</label>
-									<ul>
-										{% for col in value %}
-											<li><a class="collection" db="{{key}}" col="{{col}}" href="#">{{col}}</a></li>	
-										{% endfor %}
-									</ul>
-								</li>
-								{% endfor %}
-							</ul>
-						</li>
-					</ul>
-				</div>
+		<div class="span2">
+			<div class="btn-group">
+				<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Connect</a>
+				<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Disconnect</a>
 			</div>
-			<div class="span10">
-				<div id="details" class="alert alert-info">
-					<h4>You are currently not viewing any collection.</h4>
-				</div>
-				<table align="right">
-					<tr>
-						<td algin="top">
-							<span id="searchpanel"><textarea id="searchcriteria" rows="1"></textarea> <button id="search" class="btn btn-primary" type="button" db="{{db}}" col="{{col}}">Search</button></span>
-						</td>
-					</tr>
-				</table>
-				<div id="datadiv">
-				</div>
+			<hr>
+			<div id="databases">
+			</div>
+		</div>
+		<div class="span10">
+			<div id="details" class="alert alert-info">
+				<h4>You are currently not viewing any collection.</h4>
+			</div>
+			<table align="right">
+				<tr>
+					<td algin="top">
+						<span id="searchpanel"><textarea id="searchcriteria" rows="1"></textarea> <button id="search" class="btn btn-primary" type="button" db="{{db}}" col="{{col}}" host="" port="">Search</button></span>
+					</td>
+				</tr>
+			</table>
+			<div id="datadiv">
 			</div>
 		</div>
 	</div>
-  </body>
-  <script>
-	$(document).ready(function(){
-		$("#searchpanel").hide();
-		$('.collection').click(function(){
-			$("#searchpanel").show();
-			$("#search").attr("db",$(this).attr("db"));
-			$("#search").attr("col",$(this).attr("col"));
-			var details = '<h4>You are viewing the collection ' + $(this).attr("col") + ' in database ' + $(this).attr("db") + '</h4>';
-			$("#details").html(details);
-			$("#details").show();
-			$.ajax({
-				type: "GET",
-				url: "/viewcollection",
-				data: { db: $(this).attr("db"), col: $(this).attr("col") }
-				}).done(function( msg ) {
-					$("#datadiv").html(msg);
-			});
-		});
-	});
-	$('#search').click(function(e){
+</div>
+</body>
+<script>
+$(document).ready(function(){
+	var connectMongoPanel = '<p><i id="addprofile" class="icon-plus"></i>&nbsp;&nbsp;<i id="editprofile" class="icon-edit"></i>&nbsp;&nbsp;<i id="deleteprofile" class="icon-minus"></i></p>'+
+	'<form id="profileform" action="/manageprofile/" method="POST">'+
+	'<input type="hidden" id="mode" name="mode" value=""/>'+
+	'<div id="status" class="alert">'+
+	'<h4 id="statustext"></h4>'+
+	'</div>'+
+    '<table class="table table-bordered">'+
+	'<tr>'+
+	'<td>'+
+	'<select class="mongoprofile" name="mongoconf" id="mongoconf" size="10">'+
+	'{% for key, value in mongoRepoList.items %}'+
+	'<option hostport="{{value.1}}" value="{{key}}">{{value.0}}</option>'+
+	'{% endfor %}'+
+	'</select>'+
+	'</td>'+
+	'<td>'+
+	'<label>Name		:</label><input id="name" name="name" type="text" disabled="true" value=""/>'+
+	'<label>Server	:</label><input id="server" name="server" type="text" disabled="true" value=""/>'+
+	'<label>Port		:</label><input id="port" name="port" type="text" disabled="true" value=""/>'+
+	'<input type="submit" id="save" class="btn btn-primary"></input>'+
+	'</td>'+
+	'</tr>'+
+	'</table>'+
+	'</form>';
+	
+	$("#connectmongo").html(connectMongoPanel);
+	
+	$("#status").hide();
+	$("#searchpanel").hide();
+	
+	$('.collection').click(function(){
+		$("#searchpanel").show();
+		$("#search").attr("db",$(this).attr("db"));
+		$("#search").attr("col",$(this).attr("col"));
+		var temp = splitHostPort($(this).attr("hostport"));
+		var host = temp[0];
+		var port = temp[1];
+		$("#search").attr("host",host);
+		$("#search").attr("port",port);
+		var details = '<h4>You are viewing the collection</h4> <h3>' + $(this).attr("col") + '</h3> <h4>in database</h4> <h3>' + $(this).attr("db") + '</h3>';
+		$("#details").html(details);
+		$("#details").show();
 		$.ajax({
 			type: "GET",
 			url: "/viewcollection",
-			data: { db: $(this).attr("db"), col: $(this).attr("col"), searchcriteria : $("#searchcriteria").val() }
+			data: { db: $(this).attr("db"), col: $(this).attr("col"), host: host, port : port }
 			}).done(function( msg ) {
 				$("#datadiv").html(msg);
 		});
 	});
-  </script
+	
+	$('#search').click(function(e){
+		$.ajax({
+			type: "GET",
+			url: "/viewcollection",
+			data: { db: $(this).attr("db"), col: $(this).attr("col"), host:$(this).attr("host"), port:$(this).attr("port"), searchcriteria : $("#searchcriteria").val() }
+			}).done(function( msg ) {
+				$("#datadiv").html(msg);
+		});
+	});
+	
+	$(".mongoprofile").change(function(){
+		var temp = $(this).children(":selected").attr("hostport").split(":");
+		$("#name").val($(this).children(":selected").text());
+		$("#server").val(temp[0]);
+		$("#port").val(temp[1]);
+		$("#name").attr("disabled","true");
+		$("#server").attr("disabled","true");
+		$("#port").attr("disabled","true");
+	});
+	
+	$("#btnConnect").click(function(){
+		$.ajax({
+		type: "GET",
+		url: "/loaddatabase",
+		data: { profilename: $("#name").val(), host: $("#server").val(), port : $("#port").val() }
+		}).done(function( msg ) {
+			$("#databases").append(msg);
+		});
+	});
+	
+	$("#addprofile").click(function(){
+		$("#name").removeAttr("disabled");
+		$("#server").removeAttr("disabled");
+		$("#port").removeAttr("disabled");
+		clearText();
+		$("#mode").val("add");
+	});
+	
+	$("#editprofile").click(function(){
+		$("#name").attr("disabled","true");
+		$("#server").removeAttr("disabled");
+		$("#port").removeAttr("disabled");
+		$("#mode").val("edit");
+	});
+	
+	$("#profileform").bind('submit',function(){
+		$.ajax({
+			type:"POST",
+			url:"/manageprofile/",
+			data:{mongoconf:$("#mongoconf").val(), name:$("#name").val(), server:$("#server").val(), port:$("#port").val(), mode:$("#mode").val()},
+			dataType:"json",
+			contentType:"application/json",
+		}).done(function(msg){
+			reloadConnectPanel(msg);
+			setStatusAndShow(msg)
+		});
+		return false;
+	});
+	
+	$("#deleteprofile").click(function(){
+		var profilename = $("#name").val();
+		var profileIndex = $("#mongoconf").val();
+		if (profilename != ''){
+			$("#mode").val("delete");
+			$.ajax({
+			type:"POST",
+			url:"/manageprofile/",
+			data:{mongoconf:$("#mongoconf").val(), name:$("#name").val(), server:$("#server").val(), port:$("#port").val(), mode:$("#mode").val()},
+			dataType:"json",
+			contentType:"application/json",
+		}).done(function(msg){
+			setStatusAndShow(msg);
+			$('#mongoconf option[value=' + profileIndex + ']').remove();
+			clearText();
+		});
+		}
+	});
+	
+	function reloadConnectPanel(msg){
+		$("#mongoconf").empty();
+		var i;
+		for(i in msg.mongoRepoList){
+			var option = '<option hostport="' + msg.mongoRepoList[i][1] + '" ';
+			if (parseInt(i) == 1){
+				option = option + 'selected="selected"';
+			}
+			option = option + 'value="' + i + '">';
+			option = option + msg.mongoRepoList[i][0] + '</option>';
+			$("#mongoconf").append(option);
+		}
+		clearText();
+		$("#mongoconf").val([]);	
+	}
+	
+	function clearText(){
+		$("#name").val("");
+		$("#server").val("");
+		$("#port").val("");
+	}
+	
+	function setStatusAndShow(msg){
+		if (msg.status == 'error'){
+			$("#status").removeClass("alert-success");
+			$("#status").addClass("alert-error");
+		}
+		else{
+			$("#status").removeClass("alert-error");
+			$("#status").addClass("alert-success");
+		}
+		$("#status").show();
+		$("#statustext").text(msg.message);
+		$("#status").fadeOut(3000);
+	}
+});
+</script
 </html>
