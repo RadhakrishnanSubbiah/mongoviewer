@@ -142,4 +142,5 @@ def WriteToFile(mongoRepoList):
 		f.write(temp)	
 		f.close()
 	except:
+		print sys.exc_info()[0]
 		raise Exception("Problem in saving the data.")
