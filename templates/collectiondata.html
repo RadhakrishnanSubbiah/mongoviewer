@@ -6,12 +6,57 @@
 	</thead>
 	{% load mongotemplates %}
 	{% for d in data %}
-	<tr>
+	{% with count=forloop.counter %}
+	<tr id="id_{{count}}">
 		{% for k in key_list %}
 		<td>{{d|keyvalue:k}}</td>
 		{% endfor %}
-		<td><i class="icon-edit"></td>
-		<td><i class="icon-trash"></td>
+		<td><i class="icon-edit pointer" title="Edit"></td>
+		<td><i class="icon-trash pointer" idvalue="{{d|keyvalue:'_id'}}" row_id="{{count}}" title="Delete"></td>
 	</tr>
+	{% endwith %}
 	{% endfor %}
 </table>
+<div id="delete-dialog" style="display: none">
+    <p>
+        Do you want to delete this record?
+    </p>
+    <button id="deleteconfirm" class="btn-danger close-dialog">Yes</button>
+    <button id="no" class="btn-primary">No</button>
+</div>
+<script>
+	var id = '';
+	var idvalue = '';
+	$(".icon-trash").click(function(){
+		id = '#id_'+$(this).attr("row_id");
+		idvalue = $(this).attr("idvalue");
+		$( "#delete-dialog" ).dialog({
+			title:"Delete Confirmation",
+            resizable: false,
+            height:120,
+			width:350,
+            modal: true,
+        });
+	});
+	
+	$("#no").click(function(e){
+		e.preventDefault();
+		$( "#delete-dialog" ).dialog("close");
+	});
+	
+	$("#deleteconfirm").click(function(e){
+		e.preventDefault();
+		$( "#delete-dialog" ).dialog("close");
+		$.ajax({
+			type: "POST",
+			url: "/delete/",
+			data: { db: $("#search").attr("db"), col: $("#search").attr("col"), host: $("#search").attr("host"), port : $("#search").attr("port"),
+			_id:idvalue }
+			}).done(function( msg ) {
+				$("#col_status").html(msg.status);
+				$("#col_status").show();
+				$(id).hide(3000);
+				$("#col_status").hide(3000);
+		});
+	});
+</script>

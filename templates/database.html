@@ -5,7 +5,7 @@
 			<label for="item-0">{{k}}</label>
 			<ul>
 				{% for key, value in v.items %}
-				<li><input type="checkbox" id="item-0-0" /><label for="item-0-0">{{key}}</label>
+				<li><input type="checkbox" id="{{forloop.counter}}" /><label for="{{forloop.counter}}">{{key}}</label>
 					<ul>
 						{% for col in value %}
 							<li><a class="collection" db="{{key}}" col="{{col}}" href="#" hostport="{{k}}">{{col}}</a></li>	
